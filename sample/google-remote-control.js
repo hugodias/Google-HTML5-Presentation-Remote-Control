@@ -53,6 +53,12 @@ if (!window.io) {
 			curSlide = 0;
 			updateSlides();
 		});
+
+		// Go to a specific slide
+		priv.socket.on('gotoslide', function (data) {
+			curSlide = data.slide - 1;
+			updateSlides();
+		});
 	}
 
 	window.GoogleRemoteControl = GoogleRemoteControl;
