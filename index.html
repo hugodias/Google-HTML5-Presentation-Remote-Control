@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Google Remote Control 0.1 Alpha - Server</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>   
+
+    <!-- Le styles -->
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">     
+    <style type="text/css">
+      body {
+        padding-top: 40px;
+        padding-bottom: 40px;
+        background-color: #f5f5f5;
+      }
+
+      .form-signin {
+        max-width: 300px;
+        padding: 19px 29px 29px;
+        margin: 0 auto 20px;
+        background-color: #fff;
+        border: 1px solid #e5e5e5;
+        -webkit-border-radius: 5px;
+           -moz-border-radius: 5px;
+                border-radius: 5px;
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
+      }
+
+    </style>
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="container">
+      <form class="form-signin" onSubmit="return false;" style="text-align:center">
+          <input type="button" class="bt btn btn-primary btn-large" id="previous" value="<">
+          <input type="button" class="bt btn btn-primary btn-large" id="reset" value="R">
+          <input type="button" class="bt btn btn-primary btn-large" id="next" value=">">       
+      </form>
+    </div> <!-- /container -->
+    <script type="text/javascript">
+
+    // ['development','tests','production']
+    var current_envioronment = 'development';
+
+    // Key to Sync
+    var key = false;
+
+    // Ask the key when in production envioronment
+    if( current_envioronment === 'production') {
+      while(!key){
+        key= window.prompt("Please enter the access code to sync:", 10);
+      }
+    } else { key = 10; }
+
+
+    var socket = io.connect(window.location.href);
+    socket.emit('requestSync', key);
+
+    document.getElementById("next").addEventListener("click", function() {
+        socket.emit("next");
+    });
+
+    document.getElementById("previous").addEventListener("click", function() {
+        socket.emit("prev");
+    });
+
+    document.getElementById("reset").addEventListener("click", function() {
+        socket.emit("reset");
+    });                   
+    </script>
+  </body>
+</html>
