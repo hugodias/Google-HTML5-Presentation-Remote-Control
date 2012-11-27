@@ -41,6 +41,12 @@ io.sockets.on('connection', function (socket) {
   socket.on('start', function(){
       io.sockets.in(hash).emit('start');
   });
+
+  /* Emit to the client the number of the slide required */
+  socket.on('gotoslide',function(data){
+    io.sockets.in(hash).emit('gotoslide',{ slide : data.slide });
+  });
+
   socket.on('requestSync', function(key) {
       socket.join(key);
       hash= key;

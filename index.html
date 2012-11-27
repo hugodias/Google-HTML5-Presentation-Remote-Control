@@ -6,8 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">    
     <script src="/socket.io/socket.io.js"></script>
     <!-- Le styles -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">     
     <style type="text/css">
+      .clearfix{
+        clear:both;
+      }
       body {
         padding-top: 40px;
         padding-bottom: 40px;
@@ -28,6 +32,10 @@
                 box-shadow: 0 1px 2px rgba(0,0,0,.05);
       }
 
+      .btn-go{
+        margin-top:-10px;
+      }
+
     </style>
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -42,39 +50,58 @@
       <form class="form-signin" onSubmit="return false;" style="text-align:center">
           <input type="button" class="bt btn btn-primary btn-large" id="previous" value="<">
           <input type="button" class="bt btn btn-primary btn-large" id="reset" value="R">
-          <input type="button" class="bt btn btn-primary btn-large" id="next" value=">">       
+          <input type="button" class="bt btn btn-primary btn-large" id="next" value=">"> 
+          <div class="clearfix"></div>
+          <br/>
+          <input type="text" placeholder="Go to slide" class="span2" id="goto">
+          <input type="button" value="Go" class="btn btn-primary btn-go" id="gotobtn">   
       </form>
     </div> <!-- /container -->
     <script type="text/javascript">
 
-    // ['development','tests','production']
-    var current_envioronment = 'development';
+    $(function(){
 
-    // Key to Sync
-    var key = false;
+      // ['development','tests','production']
+      var current_envioronment = 'development';
 
-    // Ask the key when in production envioronment
-    if( current_envioronment === 'production') {
-      while(!key){
-        key= window.prompt("Please enter the access code to sync:", 10);
-      }
-    } else { key = 10; }
+      // Key to Sync
+      var key = false;
+
+      // Ask the key when in production envioronment
+      if( current_envioronment === 'production') {
+        while(!key){
+          key= window.prompt("Please enter the access code to sync:", 10);
+        }
+      } else { key = 10; }
 
 
-    var socket = io.connect(window.location.href);
-    socket.emit('requestSync', key);
+      var socket = io.connect(window.location.href);
+      socket.emit('requestSync', key);
 
-    document.getElementById("next").addEventListener("click", function() {
+      $('#next').click(function(){
         socket.emit("next");
-    });
+      });
 
-    document.getElementById("previous").addEventListener("click", function() {
+      $('#previous').click(function(){
         socket.emit("prev");
+      });
+
+      $('#reset').click(function(){
+        socket.emit("reset");
+      });
+
+      /* Request a specifc slide */
+      $("#gotobtn").click(function(){
+        var slide = $('#goto').val();
+        socket.emit("gotoslide", {
+          slide: slide
+        });
+      });
+
     });
 
-    document.getElementById("reset").addEventListener("click", function() {
-        socket.emit("reset");
-    });                   
+
+
     </script>
   </body>
 </html>
